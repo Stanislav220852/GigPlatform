@@ -1,4 +1,4 @@
-from .user import User
+from .User import User
 from .contractor_profile import ContractorProfile
 from .task import Task
 from .task_proposal import TaskProposal

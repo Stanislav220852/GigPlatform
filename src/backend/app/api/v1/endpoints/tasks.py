@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from geoalchemy2.functions import ST_DWithin, ST_Point
-from app.db.session import get_db
+from app.db.database import get_db
 from app.models.task import Task
 
 router = APIRouter()

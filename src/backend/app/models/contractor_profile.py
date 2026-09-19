@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Numeric, Boolean, Integer, ForeignKey
+from sqlalchemy import Column, String, Boolean, Integer,ForeignKey, UUID
 from sqlalchemy.orm import relationship
 from .base import Base
 
@@ -6,7 +6,7 @@ from .base import Base
 class ContractorProfile(Base):
     __tablename__ = "contractor_profiles"
 
-    user_id = Column(UUID(as_uuid=True), primary_key=True, ForeignKey("users.id", ondelete="CASCADE"))
+    user_id = Column(UUID(as_uuid=True),  ForeignKey("users.id", ondelete="CASCADE"),primary_key=True)
     bio = Column(String, nullable=True)
     categories = Column(String, nullable=False)
     has_own_tools = Column(Boolean, default=False)

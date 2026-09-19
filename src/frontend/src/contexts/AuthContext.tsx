@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import type { AuthTokens, LoginRequest, RegisterRequest, User } from '/src/types/index/';
+import type { AuthTokens, LoginRequest, RegisterRequest, User } from '/src/types/index';
+
 interface AuthContextType {
   user: User | null;
   tokens: AuthTokens | null;
@@ -13,6 +14,7 @@ interface AuthContextType {
 
 const AUTH_KEY = 'gigplatform_tokens';
 const USER_KEY = 'gigplatform_user';
+const API_BASE_URL = 'http://localhost:8000'; // Адрес вашего FastAPI бэкенда
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -57,28 +59,28 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
   };
 
   const loginWithCredentials = async (data: LoginRequest) => {
-    const response = await fetch('/api/v1/auth/login', {
+    const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
     if (!response.ok) throw new Error('Login failed');
     const { access_token, refresh_token } = await response.json() as AuthTokens;
-    const currentUser = await fetch('/api/v1/users/me', {
+    const currentUser = await fetch(`${API_BASE_URL}/api/v1/users/me`, {
       headers: { Authorization: `Bearer ${access_token}` },
     }).then(res => res.json());
     login({ access_token, refresh_token }, currentUser);
   };
 
   const register = async (data: RegisterRequest) => {
-    const response = await fetch('/api/v1/auth/register', {
+    const response = await fetch(`${API_BASE_URL}/api/v1/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
     if (!response.ok) throw new Error('Registration failed');
     const { access_token, refresh_token } = await response.json() as AuthTokens;
-    const currentUser = await fetch('/api/v1/users/me', {
+    const currentUser = await fetch(`${API_BASE_URL}/api/v1/users/me`, {
       headers: { Authorization: `Bearer ${access_token}` },
     }).then(res => res.json());
     login({ access_token, refresh_token }, currentUser);
@@ -86,7 +88,7 @@ export function AuthProvider({ children }: { children: JSX.Element }) {
 
   const refreshUser = async () => {
     if (!tokens) return;
-    const response = await fetch('/api/v1/users/me', {
+    const response = await fetch(`${API_BASE_URL}/api/v1/users/me`, {
       headers: { Authorization: `Bearer ${tokens.access_token}` },
     });
     if (response.ok) setUser(await response.json() as User);

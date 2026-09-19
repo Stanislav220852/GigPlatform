@@ -1,13 +1,13 @@
-from sqlalchemy import Column, Numeric, DateTime, Text, Boolean, ForeignKey
+from sqlalchemy import Column, Numeric, DateTime, Text, Boolean, ForeignKey,Uuid,String,text
 from sqlalchemy.orm import relationship
 from .base import Base
-
+import datetime
 
 class EscrowTransaction(Base):
     __tablename__ = "escrow_transactions"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()"))
-    task_id = Column(UUID(as_uuid=True), ForeignKey("tasks.id"), nullable=False)
+    id = Column(Uuid(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()"))
+    task_id = Column(Uuid(as_uuid=True), ForeignKey("tasks.id"), nullable=False)
     amount = Column(Numeric(10, 2), nullable=False)
     fee_amount = Column(Numeric(10, 2), default=0.00)
     status = Column(String(30), default="hold")

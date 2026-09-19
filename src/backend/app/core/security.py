@@ -1,7 +1,7 @@
 import bcrypt
 import jwt 
 from datetime import datetime, timedelta, timezone
-from src.core.config import settings
+from src.backend.app.core.config import settings
 from fastapi.security import OAuth2PasswordBearer
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/login")
