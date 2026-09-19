@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Task, TaskProposal, CreateProposalRequest } from '../types';
-import { apiClient } from '../api/client';
+import type { Task, TaskProposal, CreateProposalRequest } from '../types';
+import type { apiClient } from '../api/client';
 import { useAuth } from '../contexts/AuthContext';
 
 export function TaskDetail() {

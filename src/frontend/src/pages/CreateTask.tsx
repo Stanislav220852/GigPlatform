@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { apiClient } from '../api/client';
-import { CreateTaskRequest } from '../types';
+import type { apiClient } from '../api/client';
+import type { CreateTaskRequest } from '../types';
 
 const CATEGORIES = ['repair', 'delivery', 'cleaning', 'moving', 'other'];
 const URGENCY_OPTIONS = ['today', 'week', 'flexible'];

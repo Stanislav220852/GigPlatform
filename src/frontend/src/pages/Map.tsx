@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Task } from '../types';
+import type { Task } from '../types';
 import { useAuth } from '../contexts/AuthContext';
-import { apiClient } from '../api/client';
+import type { apiClient } from '../api/client';
 
 export function Map() {
   const mapRef = useRef<HTMLDivElement>(null);

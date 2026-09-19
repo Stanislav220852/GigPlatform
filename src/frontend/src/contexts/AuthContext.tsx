@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { AuthTokens, LoginRequest, RegisterRequest, User } from '../types';
-
+import type { AuthTokens, LoginRequest, RegisterRequest, User } from '/src/types/index/';
 interface AuthContextType {
   user: User | null;
   tokens: AuthTokens | null;

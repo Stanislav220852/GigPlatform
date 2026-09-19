@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { User } from '../types';
-import { apiClient } from '../api/client';
+import type { User } from '../types';
+import type  { apiClient } from '../api/client';
 
 export function Profile() {
   const navigate = useNavigate();
