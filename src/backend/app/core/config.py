@@ -1,5 +1,6 @@
+from typing import Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import Field
+from pydantic import Field, computed_field, model_validator  
 
 
 class Settings(BaseSettings):
@@ -16,15 +17,20 @@ class Settings(BaseSettings):
     POSTGRES_PORT: int 
     POSTGRES_DB: str
     
-    @property
-    def DATABASE_URL(self) -> str:
-        
-        return (
-            f"postgresql+asyncpg://"
-            f"{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@"
-            f"{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/"
-            f"{self.POSTGRES_DB}"
-        )
+    DATABASE_URL: Optional[str] = None
+
+    # 2. Если в .env строки нет, Pydantic автоматически соберет её сам
+    @model_validator(mode="after")
+    
+    def assemble_database_url(self) -> "Settings":
+        if not self.DATABASE_URL:
+            self.DATABASE_URL = (
+                f"postgresql+asyncpg://"
+                f"{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@"
+                f"{self.POSTGRES_HOST}:{self.POSTGRES_PORT}/"
+                f"{self.POSTGRES_DB}"
+            )
+        return self
         
     REDIS_HOST: str
     REDIS_PORT: int
