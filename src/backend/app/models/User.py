@@ -16,7 +16,11 @@ class User(Base):
     rating = Column(Numeric(3, 2), default=5.00)
     created_at = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)
 
-    tasks_created = relationship("Task", back_populates="client")
+    tasks_created = relationship(
+    "Task", 
+    foreign_keys="Task.client_id", 
+    back_populates="client"
+)
     proposals = relationship("TaskProposal", back_populates="contractor")
     escrow_transactions = relationship("EscrowTransaction", back_populates="user")
     messages_sent = relationship("ChatMessage", back_populates="sender")

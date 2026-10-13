@@ -8,6 +8,7 @@ class EscrowTransaction(Base):
 
     id = Column(Uuid(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()"))
     task_id = Column(Uuid(as_uuid=True), ForeignKey("tasks.id"), nullable=False)
+    user_id = Column(Uuid(as_uuid=True), ForeignKey("users.id"), nullable=False)
     amount = Column(Numeric(10, 2), nullable=False)
     fee_amount = Column(Numeric(10, 2), default=0.00)
     status = Column(String(30), default="hold")

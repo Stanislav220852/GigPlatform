@@ -52,8 +52,18 @@ def run_migrations_offline() -> None:
     with context.begin_transaction():
         context.run_migrations()
 
+def include_object(object, name, type_, reflected, compare_to):
+    # Запрещаем Alembic трогать системные таблицы PostGIS и Tiger Geocoder
+    if type_ == "table" and (
+        name in ["spatial_ref_sys", "geocode_settings", "geocode_settings_default", "topology", "layer", "geometry_columns"] 
+        or name.startswith("tiger") 
+        or name in ["addr", "county", "state", "place", "tract", "bg", "edges", "faces", "cousub", "featnames"]
+    ):
+        return False
+    return True
 
 def do_run_migrations(connection):
+    
     context.configure(connection=connection, target_metadata=target_metadata)
 
     with context.begin_transaction():

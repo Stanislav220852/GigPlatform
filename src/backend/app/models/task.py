@@ -20,8 +20,15 @@ class Task(Base):
     assigned_contractor_id = Column(Uuid(as_uuid=True), ForeignKey("users.id"), nullable=True)
     created_at = Column(DateTime(timezone=True), default=datetime.datetime.utcnow)
 
-    client = relationship("User", back_populates="tasks_created")
-    assigned_contractor = relationship("User", foreign_keys=[assigned_contractor_id])
+    client = relationship(
+    "User", 
+    foreign_keys=[client_id], 
+    back_populates="tasks_created"
+)
+    assigned_contractor = relationship(
+    "User", 
+    foreign_keys=[assigned_contractor_id]
+)
     proposals = relationship("TaskProposal", back_populates="task", cascade="all, delete-orphan")
     escrow = relationship("EscrowTransaction", back_populates="task", cascade="all, delete-orphan")
     messages = relationship("ChatMessage", back_populates="task", cascade="all, delete-orphan")

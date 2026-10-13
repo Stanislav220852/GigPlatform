@@ -1,9 +1,11 @@
-from fastapi import FastAPI
+import traceback
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from app.api.v1.api import api_router
 from app.core.config import settings
-from pydantic import BaseModel, EmailStr
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     yield
@@ -14,15 +16,43 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+# 1. Список разрешенных адресов фронтенда
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+# 2. Стандартный CORS (работает для успешных запросов)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,  # Передаем список вместо ["*"]
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-app.include_router(api_router)
+# 3. Глобальный перехватчик ошибок (гарантирует CORS при падении бэкенда)
+@app.middleware("http")
+async def catch_exceptions_middleware(request: Request, call_next):
+    try:
+        return await call_next(request)
+    except Exception as e:
+        # Принудительно выводим ошибку в консоль бэкенда, чтобы её было видно
+        print("\n" + "!"*40 + "\nОШИБКА НА БЭКЕНДЕ:\n" + traceback.format_exc() + "!"*40 + "\n")
+        
+        # Возвращаем фронтенду ответ с жестко прописанными CORS заголовками
+        return JSONResponse(
+            status_code=500,
+            content={"detail": "Internal Server Error", "error_message": str(e)},
+            headers={
+                "Access-Control-Allow-Origin": "http://localhost:5173",
+                "Access-Control-Allow-Credentials": "true",
+                "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Headers": "*"
+            }
+        )
+
+app.include_router(api_router, prefix="/api/v1")
 
 @app.get("/healthcheck", tags=["System"])
 async def health_check():
@@ -30,23 +60,6 @@ async def health_check():
         "status": "ok",
         "project": settings.PROJECT_NAME,
         "version": settings.VERSION
-    }
-    
-# 1. Описываем схему, которую ожидает получить фронтенд
-class MockRegisterResponse(BaseModel):
-    id: str = "a18778d5-ca56-4b2b-9e1c-3f5d7a8b0c2d"  # Любой тестовый UUID
-    email: EmailStr
-    full_name: str = "Тестовый Пользователь"
-    role: str = "client"  # или 'contractor'
-
-# 2. Создаем временную ручку регистрации
-@app.post("/api/v1/auth/register", response_model=MockRegisterResponse)
-async def mock_register(payload: dict): # принимает любые данные от фронта
-    return {
-        "id": "a18778d5-ca56-4b2b-9e1c-3f5d7a8b0c2d",
-        "email": payload.get("email", "test@example.com"),
-        "full_name": payload.get("full_name", "Тестовый Пользователь"),
-        "role": payload.get("role", "client")
     }
 
 if __name__ == "__main__":
