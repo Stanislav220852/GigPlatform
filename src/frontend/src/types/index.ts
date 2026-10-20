@@ -28,8 +28,9 @@ export interface Task {
   urgency: 'today' | 'week' | 'flexible';
   location: { lat: number; lng: number };
   address_name: string;
-  status: 'open' | 'in-progress' | 'completed' | 'cancelled';
+  status: 'open' | 'in_progress' | 'in-progress' | 'completed' | 'cancelled';
   assigned_contractor_id?: string;
+  assigned_contractor?: User;
   created_at: string;
   client?: User;
   proposals?: TaskProposal[];

@@ -22,3 +22,7 @@ dependencies = [
     "uvicorn>=0.24.0",
     "yandex-geocoder>=3.0.1",
 ]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+

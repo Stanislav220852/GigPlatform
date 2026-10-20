@@ -1,3 +1,4 @@
+import type React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Map } from './pages/Map';
@@ -5,10 +6,11 @@ import { CreateTask } from './pages/CreateTask';
 import { TaskDetail } from './pages/TaskDetail';
 import { Login } from './pages/Login';
 import { Profile } from './pages/Profile';
+import { MyTasks } from './pages/MyTasks';
 
-function RequireAuth({ children }: { children: JSX.Element }) {
+function RequireAuth({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
-  return isAuthenticated ? children : <Navigate to="/login" replace />;
+  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
 }
 
 function AppRoutes() {
@@ -23,6 +25,9 @@ function AppRoutes() {
       } />
       <Route path="/tasks/:id" element={
         <RequireAuth><TaskDetail /></RequireAuth>
+      } />
+      <Route path="/my-tasks" element={
+        <RequireAuth><MyTasks /></RequireAuth>
       } />
       <Route path="/profile" element={
         <RequireAuth><Profile /></RequireAuth>
@@ -41,3 +46,4 @@ export default function App() {
     </AuthProvider>
   );
 }
+export { App };
